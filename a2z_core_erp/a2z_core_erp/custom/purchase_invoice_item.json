@@ -1362,7 +1362,7 @@
    "field_name": "from_warehouse",
    "idx": 0,
    "is_system_generated": 1,
-   "modified": "2026-03-02 14:49:19.665468",
+   "modified": "2026-03-18 15:27:51.973155",
    "modified_by": "Administrator",
    "module": null,
    "name": "Purchase Invoice Item-from_warehouse-hidden",
