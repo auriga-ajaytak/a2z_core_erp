@@ -25,6 +25,15 @@ frappe.ui.form.on('Purchase Order', {
                 };
             });
         }
+        frm.fields_dict['billing_address'].get_query = () => {
+            console.log("asdfasdf");
+            return {
+                query: 'a2z_core_erp.a2z_core_erp.overrides.purchase_order.get_company_address',
+                filters: {
+                    company: frm.doc.company
+                }
+            };
+        };
     },
 
     customer_project(frm) {
@@ -56,8 +65,6 @@ frappe.ui.form.on('Purchase Order', {
 
 
 const blank_customer_project = (frm) => {
-    console.log("Asdfasdfasdf");
-    
     frm.doc.items.forEach((row) => {
         frappe.model.set_value(row.doctype, row.name, 'customer_project', '');
         frappe.model.set_value(row.doctype, row.name, 'operating_personnel', '');
