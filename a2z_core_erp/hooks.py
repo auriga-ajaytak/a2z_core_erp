@@ -136,9 +136,10 @@ doctype_js = {
 # ---------------
 # Override standard doctype classes
 
-# override_doctype_class = {
-# 	"Purchase Order": "a2z_core_erp.a2z_core_erp.overrides.purchase_order.CustomPurchaseOrder",
-# }
+override_doctype_class = {
+	"Sales Invoice": "a2z_core_erp.a2z_core_erp.overrides.sales_invoice.CustomSalesInvoice",
+    "Document Naming Rule": "a2z_core_erp.a2z_core_erp.overrides.document_naming_rule.CustomDocumentNamingRule",
+}
 
 # Document Events
 # ---------------

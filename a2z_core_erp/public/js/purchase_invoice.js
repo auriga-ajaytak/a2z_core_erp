@@ -1,11 +1,14 @@
 frappe.ui.form.on('Purchase Invoice', {
-    refresh(frm) {
+    onload(frm) {
         setTimeout(()=>{
             if (frm.is_new()){
                 frm.set_value('billing_address', '');
                 frm.set_value('shipping_address', '');
             }
         },3000)
+    },
+    
+    refresh(frm) {
         if (frm.doc.customer_project) {
             frm.set_query('shipping_address', () => {
                 return {

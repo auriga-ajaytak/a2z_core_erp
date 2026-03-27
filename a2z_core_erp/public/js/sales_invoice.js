@@ -1,11 +1,34 @@
 frappe.ui.form.on('Sales Invoice', {
-    refresh(frm) {
+    onload(frm) {
+        set_customer_query(frm);
         setTimeout(()=>{
             if (frm.is_new()){
                 frm.set_value('company_address', '');
-                // frm.set_value('shipping_address_name', '');
             }
         },3000)
+        frm.fields_dict['company_address'].get_query = () => {
+            return {
+                query: 'a2z_core_erp.a2z_core_erp.overrides.purchase_order.get_company_address',
+                filters: {
+                    company: frm.doc.company
+                }
+            };
+        };
+    },
+    company(frm) {
+        // Re-apply when company changes
+        set_customer_query(frm);
+        // frm.set_value('customer', null);
+        frm.fields_dict['company_address'].get_query = () => {
+            return {
+                query: 'a2z_core_erp.a2z_core_erp.overrides.purchase_order.get_company_address',
+                filters: {
+                    company: frm.doc.company
+                }
+            };
+        };
+    },
+    refresh(frm) {
         if (frm.doc.customer_project) {
             frm.set_query('shipping_address_name', () => {
                 return {
@@ -25,15 +48,6 @@ frappe.ui.form.on('Sales Invoice', {
                 };
             });
         }
-        frm.fields_dict['company_address'].get_query = () => {
-            console.log("asdfasdf");
-            return {
-                query: 'a2z_core_erp.a2z_core_erp.overrides.purchase_order.get_company_address',
-                filters: {
-                    company: frm.doc.company
-                }
-            };
-        };
     },
 
     customer_project(frm) {
@@ -74,3 +88,13 @@ const blank_customer_project = (frm) => {
     });
     frm.refresh_field('items');
 };
+
+function set_customer_query(frm) {
+    frm.set_query('customer', () => {
+        return {
+            filters: {
+                "custom_entity": frm.doc.company
+            }
+        };
+    });
+}
