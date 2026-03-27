@@ -22,6 +22,14 @@ frappe.ui.form.on('Sales Order', {
     },
     company(frm) {
         set_customer_query(frm);
+        frm.fields_dict['company_address'].get_query = () => {
+            return {
+                query: 'a2z_core_erp.a2z_core_erp.overrides.purchase_order.get_company_address',
+                filters: {
+                    company: frm.doc.company
+                }
+            };
+        };
     },
 });
 

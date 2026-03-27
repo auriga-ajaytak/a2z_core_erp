@@ -6,6 +6,15 @@ frappe.ui.form.on('Purchase Order', {
                 frm.set_value('shipping_address', '');
             }
         },3000)
+        frm.fields_dict['billing_address'].get_query = () => {
+            console.log("asdfasdf");
+            return {
+                query: 'a2z_core_erp.a2z_core_erp.overrides.purchase_order.get_company_address',
+                filters: {
+                    company: frm.doc.company
+                }
+            };
+        };
     },
     refresh(frm) {
         if (frm.doc.customer_project) {
@@ -27,15 +36,6 @@ frappe.ui.form.on('Purchase Order', {
                 };
             });
         }
-        frm.fields_dict['billing_address'].get_query = () => {
-            console.log("asdfasdf");
-            return {
-                query: 'a2z_core_erp.a2z_core_erp.overrides.purchase_order.get_company_address',
-                filters: {
-                    company: frm.doc.company
-                }
-            };
-        };
     },
 
     customer_project(frm) {
@@ -62,6 +62,18 @@ frappe.ui.form.on('Purchase Order', {
                 };
             });
         }
+    },
+
+    company(frm) {
+        frm.fields_dict['billing_address'].get_query = () => {
+            console.log("asdfasdf");
+            return {
+                query: 'a2z_core_erp.a2z_core_erp.overrides.purchase_order.get_company_address',
+                filters: {
+                    company: frm.doc.company
+                }
+            };
+        };
     }
 });
 
