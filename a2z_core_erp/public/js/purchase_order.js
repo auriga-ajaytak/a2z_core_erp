@@ -1,21 +1,64 @@
+function set_billing_address_query(frm) {
+    frm.fields_dict['billing_address'].get_query = () => {
+        return {
+            query: 'a2z_core_erp.a2z_core_erp.overrides.purchase_order.get_company_address',
+            filters: {
+                company: frm.doc.company
+            }
+        };
+    };
+}
+
+function blank_customer_project(frm) {
+    frm.doc.items.forEach((row) => {
+        frappe.model.set_value(row.doctype, row.name, 'customer_project', '');
+        frappe.model.set_value(row.doctype, row.name, 'operating_personnel', '');
+        frappe.model.set_value(row.doctype, row.name, 'client_group', '');
+        frappe.model.set_value(row.doctype, row.name, 'zone', '');
+    });
+    frm.refresh_field('items');
+}
+
 frappe.ui.form.on('Purchase Order', {
     onload(frm) {
-        setTimeout(()=>{
-            if (frm.is_new()){
+        frm._user_set_billing_address = false;
+        set_billing_address_query(frm);
+
+        if (frm.is_new()) {
+            setTimeout(() => {
                 frm.set_value('billing_address', '');
+                frm.set_value('billing_address_display', '');
                 frm.set_value('shipping_address', '');
-            }
-        },3000)
-        frm.fields_dict['billing_address'].get_query = () => {
-            console.log("asdfasdf");
-            return {
-                query: 'a2z_core_erp.a2z_core_erp.overrides.purchase_order.get_company_address',
-                filters: {
-                    company: frm.doc.company
+                frm.set_value('shipping_address_display', '');
+            }, 3000);
+
+            frappe.after_ajax(() => {
+                const field = frm.get_field('billing_address');
+                if (field && field.$input) {
+                    field.$input.on('awesomplete-selectcomplete', () => {
+                        frm._user_set_billing_address = true;
+                    });
+                    field.$input.on('change', () => {
+                        if (!field.$input.val()) {
+                            frm._user_set_billing_address = false;
+                        }
+                    });
                 }
-            };
-        };
+            });
+        }
     },
+
+    supplier(frm) {
+        if (!frm._user_set_billing_address) {
+            setTimeout(() => {
+                frm.set_value('billing_address', '');
+                frm.set_value('billing_address_display', '');
+                frm.set_value('shipping_address', '');
+                frm.set_value('shipping_address_display', '');
+            }, 3000);
+        }
+    },
+
     refresh(frm) {
         if (frm.doc.customer_project) {
             frm.set_query('shipping_address', () => {
@@ -35,6 +78,15 @@ frappe.ui.form.on('Purchase Order', {
                     }
                 };
             });
+        }
+
+        if (frm.is_new() && !frm._user_set_billing_address) {
+            setTimeout(() => {
+                frm.set_value('billing_address', '');
+                frm.set_value('billing_address_display', '');
+                frm.set_value('shipping_address', '');
+                frm.set_value('shipping_address_display', '');
+            }, 3000);
         }
     },
 
@@ -65,26 +117,7 @@ frappe.ui.form.on('Purchase Order', {
     },
 
     company(frm) {
-        frm.fields_dict['billing_address'].get_query = () => {
-            console.log("asdfasdf");
-            return {
-                query: 'a2z_core_erp.a2z_core_erp.overrides.purchase_order.get_company_address',
-                filters: {
-                    company: frm.doc.company
-                }
-            };
-        };
-    }
+        frm._user_set_billing_address = false;
+        set_billing_address_query(frm);
+    },
 });
-
-
-const blank_customer_project = (frm) => {
-    frm.doc.items.forEach((row) => {
-        frappe.model.set_value(row.doctype, row.name, 'customer_project', '');
-        frappe.model.set_value(row.doctype, row.name, 'operating_personnel', '');
-        frappe.model.set_value(row.doctype, row.name, 'client_group', '');
-        frappe.model.set_value(row.doctype, row.name, 'zone', '');
-
-    });
-    frm.refresh_field('items');
-};
