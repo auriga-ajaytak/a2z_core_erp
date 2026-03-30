@@ -48,7 +48,7 @@ class CustomSalesInvoice(SalesInvoice):
 
         state_code = self._get_state_code_for_gstin(self.company_gstin)
         if self.is_return:
-            return f"{abbr}{state_code}/{fy_short}/{month}/CN/.##"
+            return f"{abbr}{state_code}/{fy_short}/{month}/CN.##"
         else:
             return f"{abbr}{state_code}/{fy_short}/{month}/.####"
 
