@@ -43,7 +43,15 @@ app_license = "mit"
 # page_js = {"page" : "public/js/file.js"}
 
 # include js in doctype views
-# doctype_js = {"doctype" : "public/js/doctype.js"}
+doctype_js = {
+    "Purchase Order": "public/js/purchase_order.js",
+    "Purchase Invoice": "public/js/purchase_invoice.js",
+    "Sales Order": "public/js/sales_order.js",
+    "Sales Invoice": "public/js/sales_invoice.js",
+    "Material Request": "public/js/material_request.js",
+    "Address": "public/js/address.js",
+    "Payment Entry": "public/js/payment_entry.js"
+}
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
 # doctype_calendar_js = {"doctype" : "public/js/doctype_calendar.js"}
@@ -129,9 +137,10 @@ app_license = "mit"
 # ---------------
 # Override standard doctype classes
 
-# override_doctype_class = {
-# 	"ToDo": "custom_app.overrides.CustomToDo"
-# }
+override_doctype_class = {
+	"Sales Invoice": "a2z_core_erp.a2z_core_erp.overrides.sales_invoice.CustomSalesInvoice",
+    "Document Naming Rule": "a2z_core_erp.a2z_core_erp.overrides.document_naming_rule.CustomDocumentNamingRule",
+}
 
 # Document Events
 # ---------------
