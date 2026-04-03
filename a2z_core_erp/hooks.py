@@ -6,7 +6,7 @@ app_email = "gaurav.agrawal@aurigait.com"
 app_license = "mit"
 
 # Apps
-# ------------------
+# -------------------
 
 # required_apps = []
 
