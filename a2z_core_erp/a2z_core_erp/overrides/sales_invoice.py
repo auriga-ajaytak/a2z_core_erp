@@ -6,6 +6,11 @@ from erpnext.accounts.doctype.sales_invoice.sales_invoice import SalesInvoice
 
 class CustomSalesInvoice(SalesInvoice):
 
+    def validate(self):
+        super().validate()
+        if not self.custom_billing_name:
+             frappe.throw(_("Please Enter Custom Billing Name (Party Name)"), title=_("Missing Billing Name"))
+
     def autoname(self):
         if self.amended_from:
             super().autoname()
