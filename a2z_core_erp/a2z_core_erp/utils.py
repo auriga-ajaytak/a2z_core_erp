@@ -1,7 +1,7 @@
 import frappe
 from frappe import _
 
-def calculate_tax_category(address_1, address_2, is_return=False):
+def calculate_tax_category(address_1, address_2, is_reverse_charge=False):
     """
     Compares the GST states of two addresses and returns the tax category.
     """
@@ -13,7 +13,7 @@ def calculate_tax_category(address_1, address_2, is_return=False):
 
     if state_1 and state_2:
         is_match = (state_1 == state_2)
-        if is_return:
+        if is_reverse_charge:
             return "Reverse Charge In-State" if is_match else "Reverse Charge Out-State"
         else:
             return "In-State" if is_match else "Out-State"
@@ -21,12 +21,12 @@ def calculate_tax_category(address_1, address_2, is_return=False):
     return ""
 
 @frappe.whitelist()
-def get_tax_category_for_client(address_1, address_2, is_return=False):
+def get_tax_category_for_client(address_1, address_2, is_reverse_charge=False):
     """
     Whitelisted function for client-side JS triggers.
     """
     # handle strings from JS call
-    if isinstance(is_return, str):
-        is_return = is_return.lower() in ["true", "1"]
+    if isinstance(is_reverse_charge, str):
+        is_reverse_charge = is_reverse_charge.lower() in ["true", "1"]
     
-    return calculate_tax_category(address_1, address_2, is_return)
+    return calculate_tax_category(address_1, address_2, is_reverse_charge)

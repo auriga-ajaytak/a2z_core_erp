@@ -26,7 +26,7 @@ function set_tax_category_based_on_address(frm) {
             args: {
                 address_1: frm.doc.supplier_address,
                 address_2: frm.doc.billing_address,
-                is_return: 0
+                is_reverse_charge: frm.doc.is_reverse_charge
             },
             callback: (r) => {
                 if (r.message && frm.doc.tax_category !== r.message) {
@@ -149,6 +149,10 @@ frappe.ui.form.on('Purchase Order', {
     },
 
     billing_address(frm) {
+        set_tax_category_based_on_address(frm);
+    },
+
+    is_reverse_charge(frm) {
         set_tax_category_based_on_address(frm);
     }
 });
