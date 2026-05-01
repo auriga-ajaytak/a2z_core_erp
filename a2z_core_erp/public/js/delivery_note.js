@@ -5,7 +5,7 @@ function set_tax_category_based_on_address(frm) {
             args: {
                 address_1: frm.doc.customer_address,
                 address_2: frm.doc.company_address,
-                is_return: frm.doc.is_return
+                is_reverse_charge: frm.doc.is_reverse_charge
             },
             callback: (r) => {
                 if (r.message && frm.doc.tax_category !== r.message) {
@@ -25,7 +25,7 @@ frappe.ui.form.on('Delivery Note', {
         set_tax_category_based_on_address(frm);
     },
 
-    is_return(frm) {
+    is_reverse_charge(frm) {
         set_tax_category_based_on_address(frm);
     }
 });
