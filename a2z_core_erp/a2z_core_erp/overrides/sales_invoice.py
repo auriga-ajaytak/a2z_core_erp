@@ -1,7 +1,11 @@
+import re
+
 import frappe
 from frappe import _
-from frappe.model.naming import make_autoname
+from frappe.model.naming import make_autoname, revert_series_if_last
 from erpnext.accounts.doctype.sales_invoice.sales_invoice import SalesInvoice
+
+A2Z_COMPANY = "A2Z Infraservices Limited"
 
 
 class CustomSalesInvoice(SalesInvoice):
@@ -10,7 +14,7 @@ class CustomSalesInvoice(SalesInvoice):
         if self.amended_from:
             super().autoname()
             return
-        if self.company == "A2Z Infraservices Limited":
+        if self.company == A2Z_COMPANY:
             self.name = self._get_invoice_series_name()
         else:
             super().autoname()
@@ -18,6 +22,27 @@ class CustomSalesInvoice(SalesInvoice):
     def _get_invoice_series_name(self):
         prefix = self._build_series_prefix()
         return make_autoname(prefix, doc=self)
+
+    def after_delete(self):
+        """Release the invoice number if this was the last one in its series.
+
+        Frappe rewinds the counter on delete, but locates it through the
+        `naming_series` field (delete_doc.update_naming_series). These invoices are
+        named by _build_series_prefix() instead, so that lookup finds no counter and
+        the number is burnt. Rewind the real counter here.
+        """
+        if self.amended_from or self.company != A2Z_COMPANY:
+            return
+
+        # Take the counter key from the name itself, not from posting_date: the date
+        # may have been edited after the invoice was named, which would point the
+        # rewind at another month's counter.
+        match = re.match(r"^(?P<prefix>.*?)(?P<digits>\d+)$", self.name or "")
+        if not match:
+            return
+
+        series = "{}.{}".format(match["prefix"], "#" * len(match["digits"]))
+        revert_series_if_last(series, self.name, self)
 
     def _build_series_prefix(self):
 
