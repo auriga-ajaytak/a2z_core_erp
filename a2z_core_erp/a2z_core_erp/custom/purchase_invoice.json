@@ -2557,7 +2557,7 @@
    "property": "default_view",
    "property_type": "Select",
    "row_name": null,
-   "value": "List"
+   "value": "Report"
   },
   {
    "_assign": null,
