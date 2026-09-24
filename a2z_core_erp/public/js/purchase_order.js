@@ -112,7 +112,14 @@ frappe.ui.form.on('Purchase Order', {
         if (!frm.doc.customer_project) {
             blank_customer_project(frm);
         }
-        frm.set_value('shipping_address', '');
+        // Only clear if it actually has a value - frm.set_value() fires the
+        // shipping_address change handler even when set to '', which can
+        // trigger downstream tax/address checks before a Supplier has been
+        // picked (e.g. during the automatic accounting-dimension defaults
+        // pass on a new record).
+        if (frm.doc.shipping_address) {
+            frm.set_value('shipping_address', '');
+        }
         if (frm.doc.customer_project) {
             frm.set_query('shipping_address', () => {
                 return {
