@@ -128,7 +128,15 @@ frappe.ui.form.on('Sales Invoice', {
         if (!frm.doc.customer_project) {
             blank_customer_project(frm);
         }
-        frm.set_value('shipping_address_name', '');
+        // Only clear if it actually has a value - frm.set_value() fires the
+        // shipping_address_name change handler even when set to '', which
+        // triggers core ERPNext's tax/mandatory-field checks and throws
+        // "Please enter Lead / Customer / Supplier first" when this runs
+        // before a Customer has been picked (e.g. during the automatic
+        // accounting-dimension defaults pass on a new record).
+        if (frm.doc.shipping_address_name) {
+            frm.set_value('shipping_address_name', '');
+        }
 
         if (frm.doc.customer_project) {
             frm.set_query('shipping_address_name', () => {
